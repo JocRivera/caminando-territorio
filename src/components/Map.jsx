@@ -5,6 +5,7 @@ import { getFloraFauna } from '../services/apiService';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
+import 'leaflet-gpx'; // Importa la librería para manejar GPX
 
 // Asegúrate de corregir los íconos predeterminados de Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,12 +16,36 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+const GPXTrack = ({ gpxFile }) => {
+    const map = useMap();
+
+    useEffect(() => {
+        const gpxLayer = new L.GPX(gpxFile, {
+            async: true,
+            marker_options: {
+                startIconUrl: 'https://cdn.rawgit.com/mpetazzoni/leaflet-gpx/master/pin-icon-start.png',
+                endIconUrl: 'https://cdn.rawgit.com/mpetazzoni/leaflet-gpx/master/pin-icon-end.png',
+                shadowUrl: 'https://cdn.rawgit.com/mpetazzoni/leaflet-gpx/master/pin-shadow.png'
+            }
+        }).addTo(map);
+
+        gpxLayer.on('click', () => {
+            // map.fitBounds(e.target.getBounds());
+            map.fitBounds(gpxLayer.getBounds());
+        })
+
+        return () => {
+            map.removeLayer(gpxLayer);
+        };
+    }, [map, gpxFile]);
+
+    return null;
+};
+
 const RoutingMachine = ({ waypoints }) => {
     const map = useMap();
 
     useEffect(() => {
-        if (!map) return;
-
         const routingControl = L.Routing.control({
             waypoints: waypoints,
             routeWhileDragging: true,
@@ -38,16 +63,14 @@ const RoutingMachine = ({ waypoints }) => {
 const Map = () => {
     const [floraFauna, setFloraFauna] = useState([]);
     const [center, setCenter] = useState([6.438610, -75.332093]);
-    const radius = 10000; // 20 km
+    const radius = 10000; // 10 km
 
     useEffect(() => {
         const fetchData = async () => {
             const data = await getFloraFauna();
-            console.log(data); // Verifica la estructura de los datos aquí
             setFloraFauna(data.results || []); // Asegura que sea un arreglo
             if (data.results && data.results.length > 0) {
                 const firstItem = data.results[0];
-                setCenter([firstItem.decimalLatitude, firstItem.decimalLongitude]);
             }
         };
         fetchData();
@@ -93,7 +116,8 @@ const Map = () => {
                     </Marker>
                 );
             })}
-            <RoutingMachine waypoints={waypoints} />
+            {/* <RoutingMachine waypoints={waypoints} /> */}
+            <GPXTrack gpxFile="/barbosa-la-quintero-concepcion-r010.gpx" />
         </MapContainer>
     );
 };
