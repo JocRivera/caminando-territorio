@@ -12,7 +12,10 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "caminando-territorio": "file:",
+    "file-loader": "^6.2.0",
     "leaflet": "^1.9.4",
+    "leaflet-gpx": "^2.1.2",
+    "leaflet-routing-machine": "^3.2.12",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
