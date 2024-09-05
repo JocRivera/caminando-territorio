@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl, FeatureGroup } from 'react-leaflet';
 import L from 'leaflet';
 import { getFloraFauna } from '../services/apiService';
 import 'leaflet/dist/leaflet.css';
@@ -106,23 +106,30 @@ const Map = () => {
                 radius={radius}
                 pathOptions={{ color: 'red', fillOpacity: 0.1 }}
             />
-            {floraFauna.map((item, index) => {
-                if (!item.decimalLatitude || !item.decimalLongitude) return null;
+            <LayersControl position="topright">
+                <LayersControl.Overlay name="Biodiversidad" >
+                    <FeatureGroup>
 
-                return (
-                    <Marker
-                        key={index}
-                        position={[item.decimalLatitude, item.decimalLongitude]}
-                        icon={speciesIcon}
-                    >
-                        <Popup>
-                            <strong>Nombre Científico:</strong> {item.scientificName || 'N/A'}<br />
-                            <strong>País:</strong> {item.country || 'N/A'}<br />
-                            <strong>Fecha:</strong> {item.eventDate || 'N/A'}
-                        </Popup>
-                    </Marker>
-                );
-            })}
+                        {floraFauna.map((item, index) => {
+                            if (!item.decimalLatitude || !item.decimalLongitude) return null;
+                            return (
+                                <Marker
+                                    key={index}
+                                    position={[item.decimalLatitude, item.decimalLongitude]}
+                                    icon={speciesIcon}
+                                >
+                                    <Popup>
+                                        <strong>Nombre Científico:</strong> {item.scientificName || 'N/A'}<br />
+                                        <strong>País:</strong> {item.country || 'N/A'}<br />
+                                        <strong>Fecha:</strong> {item.eventDate || 'N/A'}
+                                    </Popup>
+                                </Marker>
+                            );
+                        })}
+                    </FeatureGroup>
+
+                </LayersControl.Overlay>
+            </LayersControl>
             {/* <RoutingMachine waypoints={waypoints} /> */}
             <GPXTrack gpxFile="/barbosa-la-quintero-concepcion-r010.gpx" />
         </MapContainer>
