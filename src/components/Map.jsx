@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl } from 'react-leaflet';
 import L from 'leaflet';
 import { getFloraFauna } from '../services/apiService';
 import 'leaflet/dist/leaflet.css';
@@ -61,20 +61,27 @@ const RoutingMachine = ({ waypoints }) => {
 };
 
 const Map = () => {
-    const [floraFauna, setFloraFauna] = useState([]);
+
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const data = await getFloraFauna();
+    //         setFloraFauna(data.results || []); // Asegura que sea un arreglo
+    //         if (data.results && data.results.length > 0) {
+    //             const firstItem = data.results[0];
+    //         }
+    //     };
+    //     fetchData();
+    // }, []);
+
+
+    const floraFaunaData = [
+        { decimalLatitude: 6.448610, decimalLongitude: -75.352093, scientificName: 'Pseudotsuga menziesii', country: 'Colombia', eventDate: '2024-09-01' },
+        { decimalLatitude: 6.438610, decimalLongitude: -75.332093, scientificName: 'Eucalyptus globulus', country: 'Colombia', eventDate: '2024-09-02' },
+    ];
+    const [floraFauna, setFloraFauna] = useState(floraFaunaData);
     const [center, setCenter] = useState([6.438610, -75.332093]);
     const radius = 10000; // 10 km
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getFloraFauna();
-            setFloraFauna(data.results || []); // Asegura que sea un arreglo
-            if (data.results && data.results.length > 0) {
-                const firstItem = data.results[0];
-            }
-        };
-        fetchData();
-    }, []);
 
     const speciesIcon = new L.Icon({
         iconUrl: 'https://cdn.iconscout.com/icon/free/png-256/leaf-plant-ecology-nature-forest-ecosystem-3-3318.png',
