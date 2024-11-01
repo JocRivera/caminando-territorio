@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl, FeatureGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl, FeatureGroup, ImageOverlay } from 'react-leaflet';
 import L from 'leaflet';
 import { getFloraFauna } from '../services/apiService';
 import 'leaflet/dist/leaflet.css';
@@ -95,6 +95,11 @@ const Map = () => {
         L.latLng(6.2289, -75.5908) // Envigado
     ];
 
+    const radarImageUrl = 'https://siata.gov.co/CalidadAire/Imagen_Radar/Radar.webp?no_cache=632635058726676900'; // Reemplaza esto con la URL obtenida de Playwright
+    const bounds = [
+        [6.45, -75.55], // Aproximación de la esquina noroeste
+        [6.35, -75.25]  // Aproximación de la esquina sureste
+    ];
     return (
         <MapContainer center={center} zoom={10} style={{ height: '100vh', width: '100%' }}>
             <TileLayer
@@ -130,6 +135,11 @@ const Map = () => {
 
                 </LayersControl.Overlay>
             </LayersControl>
+            <ImageOverlay
+                bounds={bounds} // Esquinas noroeste y sureste
+                url={radarImageUrl}
+                opacity={0.5} // Puedes ajustar la opacidad
+            />
             {/* <RoutingMachine waypoints={waypoints} /> */}
             <GPXTrack gpxFile="/barbosa-la-quintero-concepcion-r010.gpx" />
         </MapContainer>
